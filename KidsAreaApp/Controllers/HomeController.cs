@@ -13,6 +13,7 @@ using ZXing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Rotativa.AspNetCore;
 
 namespace KidsAreaApp.Controllers
 {
@@ -37,7 +38,7 @@ namespace KidsAreaApp.Controllers
 
         public IActionResult Privacy()
         {
-            return View();
+            return new  ViewAsPdf(5);
         }
         [HttpGet]
         public IActionResult MakeReservation()
@@ -65,22 +66,15 @@ namespace KidsAreaApp.Controllers
             qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
                           .Save(qrcodePath);
 
-            var qrcodebitmap = (Bitmap)Bitmap.FromFile(qrcodePath);
-            var qrcodeReader = new BarcodeReader();
-            var qrcodeResult = qrcodeReader.Decode(qrcodebitmap);
-            Debug.WriteLine($"Decode barcode text : {qrcodeResult.Text}");
-            Debug.WriteLine($"barcode format: {qrcodeResult.BarcodeFormat}");
-            Debug.WriteLine("Qr code read successfully");
-            reservation.Receipt.QrCodePath = $"{qrcodePath}";
+            //For test perposes
             await _dbContext.Set<Receipt>().AddAsync(reservation.Receipt);
             await _dbContext.SaveChangesAsync();
 
             await _dbContext.Reservations.AddAsync(reservation);
             await _dbContext.SaveChangesAsync();
-           
 
-
-            return View(reservation);
+            //return View(reservation);
+            return new ViewAsPdf("PrintReservation",reservation);
         }
 
         [NonAction]
@@ -139,7 +133,8 @@ namespace KidsAreaApp.Controllers
             res.Receipt = receipt;
             res.Cost=CalCost(timeInArea);
 
-            return View(res);
+            return new ViewAsPdf("PrintReservation", res);
+            //return View(res);
         }
         [NonAction]
         private static double CalCost(TimeSpan time)

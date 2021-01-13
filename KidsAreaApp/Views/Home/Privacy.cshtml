@@ -1,7 +1,9 @@
-﻿@{
+﻿@model int
+@{
     ViewData["Title"] = "Reservation";
 }
 <h1>@ViewData["Title"]</h1>
 
 <a asp-action="MakeReservation" asp-controller="Home" class="btn btn-outline-primary">Make New Reservation</a>
 
+@Model
