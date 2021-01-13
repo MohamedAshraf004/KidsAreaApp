@@ -15,7 +15,7 @@ namespace KidsAreaApp.Models
         public int ReservationId { get; set; }
         public Receipt Receipt { get; set; }
         public DateTime StartReservationTme { get; set; } = DateTime.UtcNow;
-        public DateTime EndReservationTme { get; set; }
+        public DateTime EndReservationTme { get; set; } 
         public double Cost { get; set; }
 
 

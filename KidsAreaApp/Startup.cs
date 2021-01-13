@@ -23,8 +23,7 @@ namespace KidsAreaApp
         public IConfiguration Configuration { get; }
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            services.AddRazorPages();
+            services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("KidsAreaConnection"));
@@ -50,7 +49,6 @@ namespace KidsAreaApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
             });
             RotativaConfiguration.Setup(env);
         }
