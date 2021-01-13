@@ -1,0 +1,38 @@
+﻿@model KidsAreaApp.Models.Hour
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<br />
+<br />
+<br />
+<h1 class="text-white my-4">Add New Hour</h1>
+<h4 class="text-white">Hour</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-auto">
+                <label class="sr-only" for="inlineFormInputGroup">Hour Price</label>
+                <div class="input-group mb-2">
+                    <div class="input-group-prepend">
+                        <div asp-for="HourPrice" class="input-group-text">Hour Price</div>
+                    </div>
+                    <input type="text" asp-for="HourPrice" class="form-control" id="inlineFormInputGroup" placeholder="Hour Price">
+                </div>
+                <span asp-validation-for="HourPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group mx-4">
+                <input type="submit" value="Save" class="btn btn-success" />
+                <a asp-action="Index" class="btn btn-primary">Back to List </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -14,6 +14,7 @@ namespace KidsAreaApp.Models
 
         }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<Hour> Hours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

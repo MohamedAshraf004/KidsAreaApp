@@ -47,7 +47,7 @@ namespace KidsAreaApp.Controllers
             var result=BitmapToBytesCode(qrCodeImage);
             reservation.Receipt.BarCode = result;
             //Qr Code writer to write it to wwwroot (Server)
-            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/{reservation.Receipt.SerialKey}.bmp";
+            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
             var qrcodeWritere = new BarcodeWriter();
             qrcodeWritere.Format = BarcodeFormat.QR_CODE;
             qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
@@ -63,7 +63,7 @@ namespace KidsAreaApp.Controllers
         public async Task<IActionResult> QrCodeReader(IFormFile qrcodeUploaded)
         {
             //Read QrCode
-            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/{qrcodeUploaded.FileName}";
+            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{qrcodeUploaded.FileName}";
 
             var qrcodebitmap = (Bitmap)Bitmap.FromFile(qrcodePath);
             var qrcodeReader = new BarcodeReader();
@@ -75,7 +75,7 @@ namespace KidsAreaApp.Controllers
             var timeInArea = res.EndReservationTme.Subtract(res.StartReservationTme);
             var receipt=_dbContext.Set<Receipt>().FirstOrDefault(x => x.SerialKey.ToString() == qrcodeResult.Text);
             res.Receipt = receipt;
-            res.Cost=CalCost(timeInArea);
+            res.Cost=await CalCost(timeInArea);
             return new ViewAsPdf("PrintReservation", res);
         }
         [NonAction]
@@ -88,9 +88,10 @@ namespace KidsAreaApp.Controllers
             }
         }
         [NonAction]
-        private static double CalCost(TimeSpan time)
+        private async Task<double> CalCost(TimeSpan time)
         {
-            var hoursprice=time.Hours * 10;
+            var hourCost = (await _dbContext.Hours.LastOrDefaultAsync()).HourPrice;
+            var hoursprice=time.Hours * hourCost;
             var minPrice = time.Minutes 
                switch
             {
