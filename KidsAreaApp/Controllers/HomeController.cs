@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,9 +12,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Rotativa.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace KidsAreaApp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -90,15 +90,19 @@ namespace KidsAreaApp.Controllers
         [NonAction]
         private async Task<double> CalCost(TimeSpan time)
         {
-            var hourCost = (await _dbContext.Hours.LastOrDefaultAsync()).HourPrice;
+            var hourCost = (await _dbContext.Hours.FirstOrDefaultAsync()).HourPrice;
+            if (time.Hours <1)
+            {
+                return hourCost;
+            }
             var hoursprice=time.Hours * hourCost;
             var minPrice = time.Minutes 
                switch
             {
-                <= 15 => .25 *10, 
-                > 15 and <= 30 => .50 *10, 
-                > 30 and <= 45 => .75 *10, 
-                > 45 => 10
+                <= 15 => .25 * hourCost, 
+                > 15 and <= 30 => .50 * hourCost, 
+                > 30 and <= 45 => .75 * hourCost, 
+                > 45 => hourCost
             };
             return minPrice + hoursprice;
         }

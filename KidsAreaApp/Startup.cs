@@ -1,7 +1,10 @@
 using KidsAreaApp.Models;
+using KidsAreaApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +31,30 @@ namespace KidsAreaApp
             {
                 options.UseSqlServer(Configuration.GetConnectionString("KidsAreaConnection"));
             });
+            services.AddIdentity<IdentityUser,IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedEmail = false;
+            })
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
+                    options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
+                }).AddRazorRuntimeCompilation();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = new PathString("/Identity/Account/Login");
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath= $"/Identity/Account/AccessDenied";
+            });
+
+            services.AddScoped<IDbInitializer, DbInitializer>();
+
         }
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -44,11 +69,15 @@ namespace KidsAreaApp
             app.UseStaticFiles();
 
             app.UseRouting();
+            dbInitializer.InitializeAsync();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
             RotativaConfiguration.Setup(env);
         }

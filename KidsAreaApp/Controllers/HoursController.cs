@@ -6,9 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KidsAreaApp.Models;
+using Microsoft.AspNetCore.Authorization;
+using KidsAreaApp.Utility;
 
 namespace KidsAreaApp.Controllers
 {
+    //[Authorize(Roles ="SupAdmin")]
+    [Authorize(Roles = SD.Admin +","+ SD.SupAdmin)]
     public class HoursController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,25 +26,7 @@ namespace KidsAreaApp.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Hours.ToListAsync());
-        }
-
-        //// GET: Hours/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var hour = await _context.Hours
-        //        .FirstOrDefaultAsync(m => m.HourId == id);
-        //    if (hour == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(hour);
-        //}
+        }      
 
         // GET: Hours/Create
         public IActionResult Create()
