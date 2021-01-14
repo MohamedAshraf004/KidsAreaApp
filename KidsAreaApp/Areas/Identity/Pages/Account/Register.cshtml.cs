@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using KidsAreaApp.Models;
 using KidsAreaApp.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace KidsAreaApp.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
+    [Authorize(Roles =SD.Admin+","+SD.SupAdmin)]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
@@ -48,10 +44,11 @@ namespace KidsAreaApp.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; } [Required]
-
             [Display(Name = "Name")]
             public string Name { get; set; }
-
+            [Required]
+            [Display(Name = "Phone Number")]
+            public string PhoneNumber { get; set; }
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -76,7 +73,7 @@ namespace KidsAreaApp.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email ,Name=Input.Name};
+                var user = new ApplicationUser { UserName = Input.Email, Email = Input.Email ,Name=Input.Name,PhoneNumber=Input.PhoneNumber};
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
@@ -101,7 +98,11 @@ namespace KidsAreaApp.Areas.Identity.Pages.Account
                                 await _userManager.AddToRoleAsync(user, SD.Receptionist);
                                 break;
                         }
-                        if (!User.IsInRole(SD.Receptionist))
+                        if (User.IsInRole(SD.SupAdmin))
+                        {
+                             await _userManager.AddToRoleAsync(user, SD.Receptionist);
+                        }
+                         if (!User.IsInRole(SD.Receptionist))
                         {
                             return RedirectToAction(nameof(Index), "Users");
                         }

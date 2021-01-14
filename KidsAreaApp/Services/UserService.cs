@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace KidsAreaApp.Services
 
         public async Task<ApplicationUser> GetUserByEmail(string email)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(c => c.Email == email);
+            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Email == email);
             
         }
     }

@@ -34,7 +34,9 @@ namespace KidsAreaApp
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
-            })
+                options.Lockout.MaxFailedAccessAttempts = 3;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(1);
+            }).AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<AppDbContext>();
 
             services.AddRazorPages()

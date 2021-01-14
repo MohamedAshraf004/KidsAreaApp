@@ -55,7 +55,7 @@ namespace KidsAreaApp.Services
             }, "Admin@123").GetAwaiter().GetResult();
 
 
-            ApplicationUser user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == "admin@gmail.com");
+            ApplicationUser user = await _dbContext.ApplicationUsers.FirstOrDefaultAsync(u => u.Email == "admin@gmail.com");
 
             (_userManager.AddToRoleAsync(user, SD.Admin)).GetAwaiter().GetResult();
             _dbContext.SaveChangesAsync().GetAwaiter().GetResult();

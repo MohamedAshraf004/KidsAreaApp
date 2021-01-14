@@ -11,7 +11,6 @@ using KidsAreaApp.Utility;
 
 namespace KidsAreaApp.Controllers
 {
-    //[Authorize(Roles ="SupAdmin")]
     [Authorize(Roles = SD.Admin +","+ SD.SupAdmin)]
     public class HoursController : Controller
     {
