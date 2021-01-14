@@ -31,7 +31,7 @@ namespace KidsAreaApp
             {
                 options.UseSqlServer(Configuration.GetConnectionString("KidsAreaConnection"));
             });
-            services.AddIdentity<IdentityUser,IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedEmail = false;
             })
@@ -52,6 +52,7 @@ namespace KidsAreaApp
             });
 
             services.AddScoped<IDbInitializer, DbInitializer>();
+            services.AddScoped<IUserService, UserService>();
 
         }
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,IDbInitializer dbInitializer)

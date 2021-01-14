@@ -29,15 +29,34 @@
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
 
-                @if (!User.IsInRole(SD.Admin))
+                @if (User.IsInRole(SD.Admin))
                 {
-                    <div class="form-group row">
+                    <div class="form-group row font-weight-bold font-italic">
                         <div class="col-2">
                         </div>
                         <div class="col-5">
-                            <input type="radio" name="rdUserRole" value="@SD.Admin" checked /> @SD.Admin <br />
-                            <input type="radio" name="rdUserRole" value="@SD.SupAdmin" /> @SD.SupAdmin <br />
-                            <input type="radio" name="rdUserRole" value="@SD.Receptionist" /> @SD.Receptionist
+                            @*<input type="radio" name="rdUserRole" value="@SD.Admin" checked /> @SD.Admin <br />
+                            <input type="radio" name="rdUserRole" value="@SD.SupAdmin" /> @SD.SupAdmin
+                            <input type="radio" name="rdUserRole" value="@SD.Receptionist" /> @SD.Receptionist*@
+
+                            <div class="form-check-inline">
+                                <input type="radio" name="rdUserRole" value="@SD.Admin" class="form-check-input" />
+                                <label class="form-check-label">
+                                    @SD.Admin
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <input type="radio" name="rdUserRole" value="@SD.SupAdmin" class="form-check-input" />
+                                <label class="form-check-label">
+                                    @SD.SupAdmin
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <input type="radio" name="rdUserRole" value="@SD.Receptionist" class="form-check-input" />
+                                <label class="form-check-label">
+                                    @SD.Receptionist
+                                </label>
+                            </div>
                         </div>
                     </div>
                 }
