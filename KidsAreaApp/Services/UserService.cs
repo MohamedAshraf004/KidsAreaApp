@@ -20,24 +20,24 @@ namespace KidsAreaApp.Services
         }
         public async Task<IEnumerable<ApplicationUser>> GetUsersExceptCurrentUser(Claim claim)
         {
-            var users = await _dbContext.ApplicationUsers.Where(c => c.Id != claim.Value).ToListAsync();
+            var users = await _dbContext.Users.Where(c => c.Id != claim.Value).ToListAsync();
             return users;
         }
         public async Task<ApplicationUser> GetUserById(string id)
         {
-            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Id == id);
+            return await _dbContext.Users.FirstOrDefaultAsync(c => c.Id == id);
             
         }
         public async Task<bool> UserLock(string id)
         {
-           var r =  (await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Id == id))
+           var r =  (await _dbContext.Users.FirstOrDefaultAsync(c => c.Id == id))
                 .LockoutEnd= DateTime.Now.AddYears(2000);
            return await _dbContext.SaveChangesAsync() >0 ?true : false ;
             
         }
         public async Task<bool> UserUnLock(string id)
         {
-           var r =  (await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Id == id))
+           var r =  (await _dbContext.Users.FirstOrDefaultAsync(c => c.Id == id))
                 .LockoutEnd= DateTime.Now;
            return await _dbContext.SaveChangesAsync() >0 ?true : false ;
             
@@ -45,7 +45,7 @@ namespace KidsAreaApp.Services
 
         public async Task<ApplicationUser> GetUserByEmail(string email)
         {
-            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Email == email);
+            return await _dbContext.Users.FirstOrDefaultAsync(c => c.Email == email);
             
         }
     }
