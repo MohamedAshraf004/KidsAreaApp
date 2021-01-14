@@ -7,36 +7,36 @@
 
 <div class="row my-5">
     <div class="col-md-4 offset-md-4">
-        <h1  class="d-flex justify-content-md-center text-black-50 font-weight-bolder">@ViewData["Title"]</h1>
-        <h4 class="d-flex justify-content-md-center text-black-50 font-weight-bolder">Create a new account.</h4>
+        <h1  class="d-flex justify-content-md-center font-weight-bolder">@ViewData["Title"]</h1>
+        <h4 class="d-flex justify-content-md-center font-weight-bolder">Create a new account.</h4>
         <hr />
         <section>
-            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-white">
-                <div asp-validation-summary="All" class="text-danger bg-white"></div>
+            <form asp-route-returnUrl="@Model.ReturnUrl" method="post" >
+                <div asp-validation-summary="All" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Input.Email"></label>
                     <input asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger bg-white"></span>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Password"></label>
                     <input asp-for="Input.Password" class="form-control" />
-                    <span asp-validation-for="Input.Password" class="text-danger bg-white"></span>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.ConfirmPassword"></label>
                     <input asp-for="Input.ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger bg-white"></span>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.Name"></label>
                     <input asp-for="Input.Name" class="form-control" />
-                    <span asp-validation-for="Input.Name" class="text-danger bg-white"></span>
+                    <span asp-validation-for="Input.Name" class="text-danger "></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.PhoneNumber"></label>
                     <input asp-for="Input.PhoneNumber" class="form-control" />
-                    <span asp-validation-for="Input.PhoneNumber" class="text-danger bg-white"></span>
+                    <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                 </div>
 
                 @if (User.IsInRole(SD.Admin))

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Kids Area</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/site.css"  asp-append-version="true"/>
 </head>
 <body style="background-image:url('/Images/KidsArea.jpeg');background-size:cover;">
     <header>
@@ -38,19 +38,18 @@
         </nav>
     </header>
     <div class="container" id="main">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer bg-dark text-muted">
-        <div class="container text-white">
-            &copy; @DateTime.UtcNow.Year - Kids Area
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+            <main role="main" class="border backgroundWhiteLayout pb-3">
+                @RenderBody()
+            </main>
+            </div>
+        <footer class="border-top footer bg-dark text-muted">
+            <div class="container text-white">
+                &copy; @DateTime.UtcNow.Year - Kids Area
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
