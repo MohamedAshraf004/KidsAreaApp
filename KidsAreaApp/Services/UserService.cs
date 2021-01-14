@@ -1,4 +1,5 @@
 ﻿using KidsAreaApp.Models;
+using KidsAreaApp.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,14 +15,20 @@ namespace KidsAreaApp.Services
     public class UserService : IUserService
     {
         private readonly AppDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public UserService(AppDbContext dbContext)
+        public UserService(AppDbContext dbContext,UserManager<ApplicationUser> userManager
+                ,SignInManager<ApplicationUser> signInManager)
         {
             this._dbContext = dbContext;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
         }
         public async Task<IEnumerable<ApplicationUser>> GetUsersExceptCurrentUser(Claim claim)
         {
             var users = await _dbContext.Users.Where(c => c.Id != claim.Value).ToListAsync();
+            //var users = await userManager.GetUsersInRoleAsync(SD.Receptionist);
             return users;
         }
         public async Task<ApplicationUser> GetUserById(string id)
@@ -46,8 +53,18 @@ namespace KidsAreaApp.Services
 
         public async Task<ApplicationUser> GetUserByEmail(string email)
         {
-            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Email == email);
-            
+            return await _dbContext.ApplicationUsers.FirstOrDefaultAsync(c => c.Email == email);            
+        }
+        public async Task<IEnumerable<ApplicationUser>> GetUsersForSupAdmin(Claim claim)
+        {
+            List<ApplicationUser> Users = new List<ApplicationUser>();
+
+            var recUsers = await userManager.GetUsersInRoleAsync(SD.Receptionist);
+            var supadminUsers = (await userManager.GetUsersInRoleAsync(SD.SupAdmin)).Where(c => c.Id != claim.Value);
+            Users.AddRange(recUsers);
+            Users.AddRange(supadminUsers);
+            return Users;
+
         }
     }
 }

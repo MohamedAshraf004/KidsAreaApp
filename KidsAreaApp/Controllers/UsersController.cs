@@ -22,6 +22,11 @@ namespace KidsAreaApp.Controllers
             var claimsIdentity = ((ClaimsIdentity)this.User.Identity);
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
+            if (User.IsInRole(SD.SupAdmin))
+            {
+                return View(await _userService.GetUsersForSupAdmin(claim));
+            }
+
             return View(await _userService.GetUsersExceptCurrentUser(claim));
         }
         public async Task<IActionResult> Lock(string id)

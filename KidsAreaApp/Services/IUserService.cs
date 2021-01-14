@@ -8,7 +8,9 @@ namespace KidsAreaApp.Services
 {
     public interface IUserService
     {
+
         Task<IEnumerable<ApplicationUser>> GetUsersExceptCurrentUser(Claim claim);
+        Task<IEnumerable<ApplicationUser>> GetUsersForSupAdmin(Claim claim);
         Task<ApplicationUser> GetUserById(string id);
         Task<ApplicationUser> GetUserByEmail(string email);
         Task<bool> UserLock(string id);

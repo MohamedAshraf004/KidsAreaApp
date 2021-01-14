@@ -98,16 +98,17 @@ namespace KidsAreaApp.Areas.Identity.Pages.Account
                                 await _userManager.AddToRoleAsync(user, SD.Receptionist);
                                 break;
                         }
-                        if (User.IsInRole(SD.SupAdmin))
-                        {
-                             await _userManager.AddToRoleAsync(user, SD.Receptionist);
-                        }
-                         if (!User.IsInRole(SD.Receptionist))
-                        {
-                            return RedirectToAction(nameof(Index), "Users");
-                        }
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        
+                        //await _signInManager.SignInAsync(user, isPersistent: false);
+                        //return LocalRedirect(returnUrl);
+                    }
+                    if (User.IsInRole(SD.SupAdmin))
+                    {
+                        await _userManager.AddToRoleAsync(user, SD.Receptionist);
+                    }
+                    if (!User.IsInRole(SD.Receptionist))
+                    {
+                        return RedirectToAction(nameof(Index), "Users");
                     }
                 }
                 foreach (var error in result.Errors)

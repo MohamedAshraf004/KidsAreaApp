@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body  style="background-image:url('/Images/KidsArea.jpeg');background-size:cover;">
+<body style="background-image:url('/Images/KidsArea.jpeg');background-size:cover;">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-dark navbar-dark border-bottom box-shadow mb-3">
             <div class="container">
@@ -21,6 +21,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @if (User.IsInRole(KidsAreaApp.Utility.SD.Admin) || User.IsInRole(KidsAreaApp.Utility.SD.SupAdmin))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Hours" asp-action="Index">Hour Management</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Users" asp-action="Index">Users Management</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
