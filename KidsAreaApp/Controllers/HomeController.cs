@@ -31,13 +31,9 @@ namespace KidsAreaApp.Controllers
             this.hostEnvironment = hostEnvironment;
         }
         public IActionResult Index()=>View();
-        [HttpGet]
-        public IActionResult MakeReservation()=>View();
         [HttpPost]
         public async Task<IActionResult> MakeReservation(Reservation reservation)
         {
-            if (!ModelState.IsValid)
-                return View(reservation);
             //Qr Code writer to write it to Db
             QRCodeGenerator _qrCode = new QRCodeGenerator();
             QRCodeData _qrCodeData = 
@@ -46,15 +42,17 @@ namespace KidsAreaApp.Controllers
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             var result=BitmapToBytesCode(qrCodeImage);
             reservation.Receipt.BarCode = result;
+            #region write  to wwwroot (Server)
             //Qr Code writer to write it to wwwroot (Server)
-            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
-            var qrcodeWritere = new BarcodeWriter();
-            qrcodeWritere.Format = BarcodeFormat.QR_CODE;
-            qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
-                          .Save(qrcodePath);
+            //string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
+            //var qrcodeWritere = new BarcodeWriter();
+            //qrcodeWritere.Format = BarcodeFormat.QR_CODE;
+            //qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
+            //              .Save(qrcodePath);
             //For test perposes
             //await _dbContext.Set<Receipt>().AddAsync(reservation.Receipt);
             //await _dbContext.SaveChangesAsync();
+            #endregion
             await _dbContext.Reservations.AddAsync(reservation);
             await _dbContext.SaveChangesAsync();
             return new ViewAsPdf("PrintReservation",reservation);
@@ -62,19 +60,31 @@ namespace KidsAreaApp.Controllers
         [HttpPost]
         public async Task<IActionResult> QrCodeReader(IFormFile qrcodeUploaded)
         {
-            //Read QrCode
-            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{qrcodeUploaded.FileName}";
+            #region read from server
+            //string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{qrcodeUploaded.FileName}";
+            //var qrcodebitmap = (Bitmap)Bitmap.FromFile(qrcodePath);
+            //var qrcodeResult = qrcodeReader.Decode(qrcodebitmap);
+            //var res =await _dbContext.Reservations
+            //    .Include(receipt=>receipt.Receipt)
+            //    .FirstOrDefaultAsync(r => r.Receipt.SerialKey.ToString() == qrcodeResult.Text);
+            //test
+            #endregion
 
-            var qrcodebitmap = (Bitmap)Bitmap.FromFile(qrcodePath);
+            //Read QrCode
             var qrcodeReader = new BarcodeReader();
-            var qrcodeResult = qrcodeReader.Decode(qrcodebitmap);
-            var res =await _dbContext.Reservations
-                .Include(receipt=>receipt.Receipt)
-                .FirstOrDefaultAsync(r => r.Receipt.SerialKey.ToString() == qrcodeResult.Text);
+            using var str = qrcodeUploaded.OpenReadStream();
+ 
+            var resultImg = Image.FromStream(str);
+            var result=qrcodeReader.Decode((Bitmap)resultImg);
+            var res = await _dbContext.Reservations
+                            .Include(receipt => receipt.Receipt)
+                            .FirstOrDefaultAsync(r => r.Receipt.SerialKey.ToString() == result.Text.ToString());
             res.EndReservationTme = DateTime.UtcNow;
             var timeInArea = res.EndReservationTme.Subtract(res.StartReservationTme);
-            var receipt=_dbContext.Set<Receipt>().FirstOrDefault(x => x.SerialKey.ToString() == qrcodeResult.Text);
+            var receipt=_dbContext.Set<Receipt>().FirstOrDefault(x => x.SerialKey.ToString() == result.Text.ToString());
             res.Receipt = receipt;
+            var ult = BitmapToBytesCode((Bitmap)resultImg);
+            res.Receipt.BarCode = ult;
             res.Cost=await CalCost(timeInArea);
             return new ViewAsPdf("PrintReservation", res);
         }
