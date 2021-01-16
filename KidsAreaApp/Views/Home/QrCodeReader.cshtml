@@ -1,11 +1,17 @@
 ﻿@model Reservation
+@{
+    ViewData["Title"] = "Check Out";
+}
 
 <form asp-action="PrintReceipt" method="post">
     <div class="container row border ml-1 backgroundWhiteBorder10Padding" style="width:100%">
-        <div class="col-md-7 col-12" style="border-right:1px solid #bbb9b9">
+        <div class="col-md-8 offset-md-2 col-12" style="border-right:1px solid #bbb9b9">
             <br />
             <input type="hidden" asp-for="@Model.ReservationId" />
-            <input type="hidden" asp-for="@Model.Receipt.BarCode" />
+            <input type="hidden" asp-for="@Model.Receipt.SerialKey" />
+            <input type="hidden" asp-for="@Model.TotatCost" />
+            <input type="hidden" asp-for="@Model.StartReservationTme" />
+            <input type="hidden" asp-for="@Model.EndReservationTme" />
 
 
             <div class="form-group row">
@@ -44,14 +50,20 @@
                 </div>
             </div>
 
-            <button value="Submit" type="submit" class="btn btn-primary text-white form-control">Check Out</button>
-        </div>
-        <div class="col-md-5 col-6 mt-3">
-            <div class="col-md-12">
+            <div class="form-group row">
+                <div class="col-3">
+                    <label asp-for="@Model.Receipt.SerialKey"></label>
+                </div>
+                <div class="col-9">
+                    <input asp-for="@Model.Receipt.SerialKey" disabled class="form-control" />
+                </div>
+            </div>
 
-                <img src="@String.Format("data:image/png;base64,{0}",
-                                Convert.ToBase64String(Model.Receipt.BarCode))" height="300" width="300" />
-
+            <div class="form-group row">
+               
+                <div class="offset-6">
+                    <button value="Submit" type="submit" class="btn btn-primary text-white ">Check Out</button>
+                </div>
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@ namespace KidsAreaApp.Models
         [DisplayName("Start Time")]
         public DateTime StartReservationTme { get; set; } = DateTime.UtcNow;
         [DisplayName("End Time")]
-        public DateTime EndReservationTme { get; set; } 
+        public DateTime EndReservationTme { get; set; } = new DateTime(2021, 1, 1, 12, 0, 0);
         public double TotatCost { get; set; }
         public double CostAfterDiscount { get; set; }
         public double Discount { get; set; } = 0;

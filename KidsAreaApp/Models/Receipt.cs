@@ -8,7 +8,7 @@ namespace KidsAreaApp.Models
     {
         [Key]
         public Guid SerialKey { get; set; } = Guid.NewGuid();
-        public string QrCodePath { get; set; }
+
         [NotMapped]
         public byte[] BarCode { get; set; }
     }

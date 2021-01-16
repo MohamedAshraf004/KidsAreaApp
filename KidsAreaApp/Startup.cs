@@ -3,17 +3,15 @@ using KidsAreaApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ReflectionIT.Mvc.Paging;
 using Rotativa.AspNetCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace KidsAreaApp
 {
@@ -52,9 +50,14 @@ namespace KidsAreaApp
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath= $"/Identity/Account/AccessDenied";
             });
-
+            services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IDbInitializer, DbInitializer>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddPaging(options => {
+                options.ViewName = "Bootstrap4";
+                options.PageParameterName = "pageindex";
+            });
 
         }
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,IDbInitializer dbInitializer)
