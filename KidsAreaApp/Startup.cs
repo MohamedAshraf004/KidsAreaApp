@@ -25,6 +25,10 @@ namespace KidsAreaApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddPaging(options => {
+                options.ViewName = "Bootstrap4";
+                options.PageParameterName = "pageindex";
+            });
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("KidsAreaConnection"));
@@ -52,12 +56,7 @@ namespace KidsAreaApp
             });
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IDbInitializer, DbInitializer>();
-            services.AddScoped<IUserService, UserService>();
-
-            services.AddPaging(options => {
-                options.ViewName = "Bootstrap4";
-                options.PageParameterName = "pageindex";
-            });
+            services.AddScoped<IUserService, UserService>();         
 
         }
         public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env,IDbInitializer dbInitializer)

@@ -32,24 +32,26 @@ namespace KidsAreaApp.Services
             var result = await _dbContex.Reservations.Include(r => r.Receipt).FirstOrDefaultAsync(Reservation => Reservation.ReservationId == resservationId);
             return result;
         }
-        public async Task<IEnumerable<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate, int pageindex)
+        public async Task<PagingList<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate, int pageindex)
         {
             PagingList<Reservation> model;
             List<Reservation> query;
             if (startDate == new DateTime() && endDate == new DateTime())
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme).ToListAsync();
-                //model = PagingList.Create(query, 100, pageindex);
-                //return model;
-                return query;
+                model = PagingList.Create(query, 10, pageindex);
+                model.Action = "ReservationTransactions";
+                return model;
+                //return query;
             }
             if (startDate != new DateTime() && endDate == new DateTime())
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                     .Where(t => t.StartReservationTme.Day == startDate.Day && t.StartReservationTme.Month == startDate.Month).ToListAsync();
-                //model = PagingList.Create(query, 100, pageindex);
-                //return model;
-                return query;
+                model = PagingList.Create(query, 10, pageindex);
+                model.Action = "ReservationTransactions";
+                return model;
+                //return query;
 
             }
             if (startDate == new DateTime() && endDate != new DateTime())
@@ -57,17 +59,19 @@ namespace KidsAreaApp.Services
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                    .Where(t => t.EndReservationTme.Day == endDate.Day && t.EndReservationTme.Month == endDate.Month).ToListAsync();
 
-                //model = PagingList.Create(query, 100, pageindex);
-                //return model;
-                return query;
+                model = PagingList.Create(query, 10, pageindex);
+                model.Action = "ReservationTransactions";
+                return model;
+                //return query;
             }
 
             query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                .Where(t => t.StartReservationTme.Day >= startDate.Day && t.EndReservationTme.Day <= endDate.Day
                && t.EndReservationTme.Month == endDate.Month && t.StartReservationTme.Month == startDate.Month).ToListAsync();
-            //model = PagingList.Create(query, 100, pageindex);
-            //return model;
-            return query;
+            model = PagingList.Create(query, 10, pageindex);
+            model.Action = "ReservationTransactions";
+            return model;
+            //return query;
         }
         public async Task<Reservation> GenerateQRCode(Reservation reservation)
         {
@@ -81,13 +85,15 @@ namespace KidsAreaApp.Services
 
             await _dbContex.Reservations.AddAsync(reservation);
             var result = await _dbContex.SaveChangesAsync();
-
+            #region Qr Code writer to write it to wwwroot (Server) for testing
             //Qr Code writer to write it to wwwroot (Server) for testing
             //string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
             //var qrcodeWritere = new BarcodeWriter();
             //qrcodeWritere.Format = BarcodeFormat.QR_CODE;
             //qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
             //              .Save(qrcodePath);
+            #endregion
+
             return reservation;
         }
         public async Task<Reservation> ReadQRCode(string serialKey)
@@ -112,11 +118,9 @@ namespace KidsAreaApp.Services
             var res = await _dbContex.SaveChangesAsync();
 
             return reservation;
-
         }
         public async Task<Reservation> GetReservationForPrintFinalCost(Reservation reservation)
         {
-
             var reservationd = await _dbContex.Reservations.FindAsync(reservation.ReservationId);
             //var reservationFromDb = await _dbContex.Reservations.Include(r => r.Receipt).FirstOrDefaultAsync(reservation => reservation.Receipt.SerialKey == reservation.Receipt.SerialKey);
 
@@ -139,6 +143,8 @@ namespace KidsAreaApp.Services
             return reservationd;
 
         }
+
+        #region helper methods
         private async Task<double> CalCost(TimeSpan time, double discount = 0)
         {
             var hourCost = (await _dbContex.Hours.FirstOrDefaultAsync()).HourPrice;
@@ -165,6 +171,7 @@ namespace KidsAreaApp.Services
                 return stream.ToArray();
             }
         }
+        #endregion
 
         #region readerQRCode With Scanner By Image
         //public async Task<Reservation> ReadQRCode(/*IFormFile qrcodeUploaded*/string serialKey)

@@ -10,7 +10,8 @@ namespace KidsAreaApp.Services
 {
     public interface IReservationService
     {
-        Task<IEnumerable<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate,int pageindex);
+        Task<PagingList<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate,int pageindex);
+        //Task<IEnumerable<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate,int pageindex);
         Task<Reservation> GenerateQRCode(Reservation reservation);
         Task<Reservation> GetReservationAsync(int resservationId);
         Task<Reservation> GetReservationForPrintFinalCost(Reservation reservation);
