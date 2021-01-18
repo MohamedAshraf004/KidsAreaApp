@@ -49,7 +49,9 @@ namespace KidsAreaApp.Controllers
         public async Task<IActionResult> MakeReservation(Reservation reservation)
         {
             //Call method generate qrcode for all of these
-            reservation = await _reservationService.GenerateQRCode(reservation);
+            //reservation = await _reservationService.GenerateQRCode(reservation);
+            reservation = await _reservationService.GeneratebarCode(reservation);
+            //return View("PrintReservation", reservation);
             return new ViewAsPdf("PrintReservation", reservation);
         }
 

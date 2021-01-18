@@ -1,6 +1,8 @@
-﻿using System;
+﻿using KidsAreaApp.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +24,8 @@ namespace KidsAreaApp.Models
         public double TotatCost { get; set; }
         public double CostAfterDiscount { get; set; }
         public double Discount { get; set; } = 0;
+        [NotMapped]
+        public int Index{ get; set; }
 
 
     }

@@ -4,77 +4,41 @@
     Layout = null;
 }
 
-<div style="position:absolute;left:40%;margin:auto;">
-    <h2 style="padding:35px;padding-bottom:0px">
-        <a asp-action="Index">Kids Area</a>
+<!DOCTYPE html>
+<html style="height:30%">
+<head>
+    <title>Print</title>
+</head>
+<body style="height:30%;direction: rtl;" id="printd">
+    <h2 style="">
+        <a style="text-decoration:none" asp-action="Index">كوكوجو كيدز ايريا</a>
     </h2>
     @if (Model.Receipt.BarCode != null)
     {
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <div class="col-md-3"></div>
-                <div class="col-md-9">
-                    <img src="@String.Format("data:image/png;base64,{0}",
-                                Convert.ToBase64String(Model.Receipt.BarCode))" height="300" width="300" />
-                </div>
-            </div>
-        </div>
+        <img src="@String.Format("data:image/png;base64,{0}",
+                                Convert.ToBase64String(Model.Receipt.BarCode))" />
+
 
     }
     else
     {
         <p> @Model.Receipt.SerialKey</p>
     }
+    <div>
+        <p>وقت البدء : @Model.StartReservationTme</p>
 
-    <p>Start Time: @Model.StartReservationTme </p>
-    @if (Model.EndReservationTme != new DateTime(2021, 1, 1, 12, 0, 0) && Model.EndReservationTme != new DateTime())
-    {
-        <p>End Time: @Model.EndReservationTme</p>
-        <p>Total Time: @((int)Model.EndReservationTme.Subtract(@Model.StartReservationTme).TotalMinutes) min </p>
-    }
+        @if (Model.EndReservationTme != new DateTime(2021, 1, 1, 12, 0, 0) && Model.EndReservationTme != new DateTime())
+        {
+            <p>وقت الانتهاء : @Model.EndReservationTme</p>
+            <p>اجمالى الوقت : @((int)Model.EndReservationTme.Subtract(@Model.StartReservationTme).TotalMinutes) min</p>
 
-    <br />
-
-    @if (Model.TotatCost != 0)
-    {
-        <p>TotatCost: @Model.TotatCost</p>
-        <p>Discount:    @Model.Discount</p>
-        <p>Cost After Discount:    @Model.CostAfterDiscount</p>
-    }
-
-    <hr />
-    <br />
-
-    @if (Model.Receipt.BarCode != null)
-    {
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <div class="col-md-3"></div>
-                <div class="col-md-9">
-                    <img src="@String.Format("data:image/png;base64,{0}",
-                                Convert.ToBase64String(Model.Receipt.BarCode))" height="300" width="300" />
-                </div>
-            </div>
-        </div>
-
-    }
-    else
-    {
-        <p> @Model.Receipt.SerialKey</p>
-    }
-    <p>Start Time @Model.StartReservationTme </p>
-    @if (Model.EndReservationTme != new DateTime(2021, 1, 1, 12, 0, 0) && Model.EndReservationTme != new DateTime())
-    {
-        <p>End Time: @Model.EndReservationTme</p>
-        <p>Total Time:  @((int)Model.EndReservationTme.Subtract(@Model.StartReservationTme).TotalMinutes) min </p>
-    }
-
-    <br />
-    @if (Model.TotatCost != 0)
-    {
-        <p>TotatCost: @Model.TotatCost</p>
-        <p>Discount:    @Model.Discount</p>
-        <p>Cost After Discount:    @Model.CostAfterDiscount</p>
-
-    }
-</div>
+            @if (Model.TotatCost != 0)
+            {
+                <p> اجمالى التكلفه: @Model.TotatCost</p>
+                <p>  الخصم: @Model.Discount</p>
+                <p>  الاجمالى بعد الخصم: @Model.CostAfterDiscount</p>
+            }
+        }
+    </div>
+</body>
+</html>

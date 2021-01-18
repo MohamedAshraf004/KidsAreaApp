@@ -8,6 +8,7 @@ using ReflectionIT.Mvc.Paging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,9 +37,15 @@ namespace KidsAreaApp.Services
         {
             PagingList<Reservation> model;
             List<Reservation> query;
+            int index = 1;
             if (startDate == new DateTime() && endDate == new DateTime())
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme).ToListAsync();
+                query.ForEach(r =>
+                {
+                    r.Index = index;
+                    index++;
+                });
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
@@ -48,6 +55,11 @@ namespace KidsAreaApp.Services
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                     .Where(t => t.StartReservationTme.Day == startDate.Day && t.StartReservationTme.Month == startDate.Month).ToListAsync();
+                query.ForEach(r =>
+                {
+                    r.Index = index;
+                    index++;
+                });
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
@@ -58,16 +70,26 @@ namespace KidsAreaApp.Services
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                    .Where(t => t.EndReservationTme.Day == endDate.Day && t.EndReservationTme.Month == endDate.Month).ToListAsync();
-
+                query.ForEach(r =>
+                {
+                    r.Index = index;
+                    index++;
+                });
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
                 //return query;
             }
-
             query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                .Where(t => t.StartReservationTme.Day >= startDate.Day && t.EndReservationTme.Day <= endDate.Day
                && t.EndReservationTme.Month == endDate.Month && t.StartReservationTme.Month == startDate.Month).ToListAsync();
+
+            query.ForEach(r =>
+            {
+                r.Index = index;
+                index++;
+            });
+
             model = PagingList.Create(query, 10, pageindex);
             model.Action = "ReservationTransactions";
             return model;
@@ -86,16 +108,39 @@ namespace KidsAreaApp.Services
             await _dbContex.Reservations.AddAsync(reservation);
             var result = await _dbContex.SaveChangesAsync();
             #region Qr Code writer to write it to wwwroot (Server) for testing
-            //Qr Code writer to write it to wwwroot (Server) for testing
-            //string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
-            //var qrcodeWritere = new BarcodeWriter();
-            //qrcodeWritere.Format = BarcodeFormat.QR_CODE;
-            //qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
-            //              .Save(qrcodePath);
+           // Qr Code writer to write it to wwwroot(Server) for testing
+
+           string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
+           var qrcodeWritere = new BarcodeWriter();
+            qrcodeWritere.Format = BarcodeFormat.CODABAR;
+            qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
+                          .Save(qrcodePath);
             #endregion
 
             return reservation;
         }
+
+        public async Task<Reservation> GeneratebarCode(Reservation reservation)
+        {
+
+            #region bar code
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var qrcodeWritere = new BarcodeWriter();
+                qrcodeWritere.Format = BarcodeFormat.CODE_128;
+                var res = qrcodeWritere.Write($"{reservation.Receipt.SerialKey}");
+                res.Save(ms, ImageFormat.Png);
+                //The Image is finally converted to Base64 string.
+                reservation.Receipt.BarCode = ms.ToArray();
+            }
+            #endregion
+            await _dbContex.Reservations.AddAsync(reservation);
+            var result = await _dbContex.SaveChangesAsync();
+           
+            return reservation;
+        }
+
+
         public async Task<Reservation> ReadQRCode(string serialKey)
         {
             var reservation = await _dbContex.Reservations
