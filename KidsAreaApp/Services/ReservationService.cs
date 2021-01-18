@@ -49,9 +49,8 @@ namespace KidsAreaApp.Services
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
-                //return query;
             }
-            if (startDate != new DateTime() && endDate == new DateTime())
+            else if (startDate != new DateTime() && endDate == new DateTime())
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                     .Where(t => t.StartReservationTme.Day == startDate.Day && t.StartReservationTme.Month == startDate.Month).ToListAsync();
@@ -63,13 +62,12 @@ namespace KidsAreaApp.Services
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
-                //return query;
-
             }
-            if (startDate == new DateTime() && endDate != new DateTime())
+            else
             {
                 query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
                    .Where(t => t.EndReservationTme.Day == endDate.Day && t.EndReservationTme.Month == endDate.Month).ToListAsync();
+
                 query.ForEach(r =>
                 {
                     r.Index = index;
@@ -78,22 +76,7 @@ namespace KidsAreaApp.Services
                 model = PagingList.Create(query, 10, pageindex);
                 model.Action = "ReservationTransactions";
                 return model;
-                //return query;
             }
-            query = await _dbContex.Reservations.AsNoTracking().OrderByDescending(x => x.StartReservationTme)
-               .Where(t => t.StartReservationTme.Day >= startDate.Day && t.EndReservationTme.Day <= endDate.Day
-               && t.EndReservationTme.Month == endDate.Month && t.StartReservationTme.Month == startDate.Month).ToListAsync();
-
-            query.ForEach(r =>
-            {
-                r.Index = index;
-                index++;
-            });
-
-            model = PagingList.Create(query, 10, pageindex);
-            model.Action = "ReservationTransactions";
-            return model;
-            //return query;
         }
         public async Task<Reservation> GenerateQRCode(Reservation reservation)
         {
@@ -135,8 +118,7 @@ namespace KidsAreaApp.Services
             }
             #endregion
             await _dbContex.Reservations.AddAsync(reservation);
-            var result = await _dbContex.SaveChangesAsync();
-           
+            await _dbContex.SaveChangesAsync();
             return reservation;
         }
 
