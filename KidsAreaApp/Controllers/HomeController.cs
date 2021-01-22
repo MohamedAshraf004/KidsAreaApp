@@ -42,6 +42,10 @@ namespace KidsAreaApp.Controllers
         public async Task<IActionResult> ReservationTransactions(DateTime endDate = new DateTime(), DateTime startDate = new DateTime(), int pageindex = 1)
         {
             var result = await _reservationService.ReservationTransactions(startDate, endDate, pageindex);
+            //if (startDate !=new DateTime())
+            //{
+            //    ViewData["startDate"] = startDate;
+            //}
 
             return View(result);
         }
@@ -53,7 +57,38 @@ namespace KidsAreaApp.Controllers
             reservation = await _reservationService.GeneratebarCode(reservation);
             //return View("PrintReservation", reservation);
             return new ViewAsPdf("PrintReservation", reservation);
+
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MakeReservation1(Reservation reservation)
+        {
+            //Call method generate qrcode for all of these
+            //reservation = await _reservationService.GenerateQRCode(reservation);
+            reservation = await _reservationService.GenerateBarCodeByGraphics(reservation);
+            return View("PrintReservation1", reservation);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MakeReservation2(Reservation reservation)
+        {
+            //Call method generate qrcode for all of these
+            //reservation = await _reservationService.GenerateQRCode(reservation);
+            reservation = await _reservationService.GeneratebarCode39(reservation);
+            return View("PrintReservation2", reservation);
+            //return new ViewAsPdf("PrintReservation", reservation);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MakeReservation3(Reservation reservation)
+        {
+            //Call method generate qrcode for all of these
+            //reservation = await _reservationService.GenerateQRCode(reservation);
+            reservation = await _reservationService.GeneratebarCodeAllOneD(reservation);
+            return View("PrintReservation", reservation);
+            //return new ViewAsPdf("PrintReservation", reservation);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> QrCodeReader(/*IFormFile qrcodeUploaded*/string serialKey)

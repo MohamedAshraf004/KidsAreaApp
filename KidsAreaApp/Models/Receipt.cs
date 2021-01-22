@@ -7,7 +7,7 @@ namespace KidsAreaApp.Models
     public class Receipt
     {
         [Key]
-        public Guid SerialKey { get; set; } = Guid.NewGuid();
+        public int SerialKey { get; set; } 
 
         [NotMapped]
         public byte[] BarCode { get; set; }

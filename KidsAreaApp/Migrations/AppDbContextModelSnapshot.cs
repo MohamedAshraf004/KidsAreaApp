@@ -105,9 +105,10 @@ namespace KidsAreaApp.Migrations
 
             modelBuilder.Entity("KidsAreaApp.Models.Receipt", b =>
                 {
-                    b.Property<Guid>("SerialKey")
+                    b.Property<int>("SerialKey")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.HasKey("SerialKey");
 
@@ -130,8 +131,8 @@ namespace KidsAreaApp.Migrations
                     b.Property<DateTime>("EndReservationTme")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ReceiptSerialKey")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("ReceiptSerialKey")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartReservationTme")
                         .HasColumnType("datetime2");

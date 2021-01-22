@@ -10,8 +10,8 @@
     <title>Print</title>
 </head>
 <body style="height:30%;direction: rtl;">
-    @*view as pdf*@
-    <div id="printd">
+
+    <div id="dvContents" style="direction: rtl;">
         <h2 style="">
             <a style="text-decoration:none" asp-action="Index">كوكوجو كيدز ايريا</a>
         </h2>
@@ -19,6 +19,7 @@
         {
             <img src="@String.Format("data:image/png;base64,{0}",
                                 Convert.ToBase64String(Model.Receipt.BarCode))" />
+
 
         }
         else
@@ -44,20 +45,35 @@
 
     </div>
 
-    @*<button type="button" class="btnclick">Print</button>
-    <a class="printPage" href="#">Print Anchor</a>
+    <input type="button" id="btnPrint" value="Print" />
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript">
-        $('a.printPage').click(function () {
-            window.print();
-            return false;
+        $(function () {
+            $("#btnPrint").click(function () {
+                var contents = $("#dvContents").html();
+                var frame1 = $('<iframe />');
+                frame1[0].name = "frame1";
+                frame1.css({ "position": "absolute", "top": "-1000000px" });
+                $("body").append(frame1);
+                var frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
+                frameDoc.document.open();
+                //Create a new HTML document.
+                frameDoc.document.write('<html><head><title>DIV Contents</title>');
+                frameDoc.document.write('</head><body style="direction: rtl;">');
+                //Append the external CSS file.
+                //frameDoc.document.write('<link href="style.css" rel="stylesheet" type="text/css" />');
+                //Append the DIV contents.
+                frameDoc.document.write(contents);
+                frameDoc.document.write('</body></html>');
+                frameDoc.document.close();
+                setTimeout(function () {
+                    window.frames["frame1"].focus();
+                    window.frames["frame1"].print();
+                    frame1.remove();
+                }, 500);
+            });
         });
-        $('.btnclick').on('click', function () {
-            window.print();
-            //$('#printd').print.print();
-            return false;
-        })
-    </script>*@
+    </script>
 </body>
 </html>
