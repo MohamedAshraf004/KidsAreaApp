@@ -92,6 +92,7 @@ namespace KidsAreaApp.Services
         {
             await _dbContex.Reservations.AddAsync(reservation);
             await _dbContex.SaveChangesAsync();
+            #region Insert Data For Testing
             //List<Reservation> ls=new List<Reservation>();
             ////test 
             //for (int i = 0; i < 200; i++)
@@ -105,7 +106,7 @@ namespace KidsAreaApp.Services
             //}
             //await _dbContex.Reservations.AddRangeAsync(ls);
             //await _dbContex.SaveChangesAsync();
-
+            #endregion
             #region bar code by zxing
             using (MemoryStream ms = new MemoryStream())
             {
@@ -216,19 +217,19 @@ namespace KidsAreaApp.Services
             }
             if (reservation.EndReservationTme == new DateTime(2021, 1, 1, 12, 0, 0))
             {
-                reservation.EndReservationTme = DateTime.UtcNow;//remove it
-                var restest = await _dbContex.SaveChangesAsync();
+                reservation.EndReservationTme = DateTime.Now;
+                //remove it
+                //var restest = await _dbContex.SaveChangesAsync();
             }
             var timeInArea = reservation.EndReservationTme.Subtract(reservation.StartReservationTme);
             //If customer come in anthor time to review his receipt
             if (reservation.TotatCost == 0)
             {
                 reservation.TotatCost = await CalCost(timeInArea);
-                var reservationUpdated = _dbContex.Reservations.Update(reservation);
-                //var reservationUpdated = _dbContex.Reservations.Attach(reservation);
-                //reservationUpdated.State = EntityState.Modified;
+                //var reservationUpdated = _dbContex.Reservations.Update(reservation);
+                var reservationUpdated = _dbContex.Reservations.Attach(reservation);
+                reservationUpdated.State = EntityState.Modified;
             }
-            //reservation.SerialKey =Convert.ToInt32(serialKey);
             var res = await _dbContex.SaveChangesAsync();
 
             return reservation;
@@ -240,18 +241,16 @@ namespace KidsAreaApp.Services
             {
                 if (reservationd.EndReservationTme == new DateTime(2021, 1, 1, 12, 0, 0) || reservationd.EndReservationTme == new DateTime())
                 {
-                    reservationd.EndReservationTme = DateTime.UtcNow;
+                    reservationd.EndReservationTme = DateTime.Now;
                 }
                 reservationd.TotatCost = await CalCost(reservationd.EndReservationTme.Subtract(reservationd.StartReservationTme));
             }
-            //reservationd.Receipt.BarCode = reservation.Receipt.BarCode;
             reservationd.Discount = reservation.Discount;
             reservationd.CostAfterDiscount = reservationd.TotatCost - reservationd.Discount;
-            _dbContex.Reservations.Update(reservationd);
+            var resupdated = _dbContex.Reservations.Attach(reservationd);
+            resupdated.State = EntityState.Modified;
+            //_dbContex.Reservations.Update(reservationd);
 
-            //var resupdated = _dbContex.Reservations.Attach(reservationFromDb);
-            //resupdated.State = EntityState.Modified;
-            //reservationd.SerialKey = reservation.SerialKey;
             var result = await _dbContex.SaveChangesAsync();
             return reservationd;
 

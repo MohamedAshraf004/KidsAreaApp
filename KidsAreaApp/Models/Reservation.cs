@@ -17,7 +17,7 @@ namespace KidsAreaApp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SerialKey { get; set; }
         [DisplayName("Start Time")]
-        public DateTime StartReservationTme { get; set; } = DateTime.UtcNow;
+        public DateTime StartReservationTme { get; set; } = DateTime.Now;
         [DisplayName("End Time")]
         public DateTime EndReservationTme { get; set; } = new DateTime(2021, 1, 1, 12, 0, 0);
         public double TotatCost { get; set; }

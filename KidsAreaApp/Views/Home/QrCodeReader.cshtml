@@ -8,11 +8,9 @@
         <div class="col-md-8 offset-md-2 col-12" style="border-right:1px solid #bbb9b9">
             <br />
             <input type="hidden" readonly asp-for="@Model.SerialKey" />
-            <input type="hidden" readonly asp-for="@Model.TotatCost" />
+            @*<input type="hidden" readonly asp-for="@Model.TotatCost" />
             <input type="hidden" readonly asp-for="@Model.StartReservationTme" />
-            <input type="hidden" readonly asp-for="@Model.EndReservationTme" />
-
-
+            <input type="hidden" readonly asp-for="@Model.EndReservationTme" />*@
             <div class="form-group row">
                 <div class="col-3">
                     <label asp-for="@Model.StartReservationTme"></label>
@@ -45,7 +43,7 @@
                     <label asp-for="@Model.Discount"></label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="@Model.Discount" class="form-control" />
+                    <input asp-for="@Model.Discount" autofocus class="form-control" />
                 </div>
             </div>
 
