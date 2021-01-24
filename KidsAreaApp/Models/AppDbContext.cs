@@ -15,7 +15,6 @@ namespace KidsAreaApp.Models
 
         }
         public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<Receipt> Receipts { get; set; }
         public DbSet<Hour> Hours { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 

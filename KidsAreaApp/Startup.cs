@@ -68,6 +68,7 @@ namespace KidsAreaApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePagesWithReExecute("/Home/Error");
                 app.UseHsts();
             }
             app.UseHttpsRedirection();

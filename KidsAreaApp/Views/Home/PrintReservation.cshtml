@@ -15,15 +15,15 @@
         <h2 style="">
             <a style="text-decoration:none" asp-action="Index">كوكوجو كيدز ايريا</a>
         </h2>
-        @if (Model.Receipt.BarCode != null)
+        @if (Model.BarCode != null)
         {
             <img src="@String.Format("data:image/png;base64,{0}",
-                                Convert.ToBase64String(Model.Receipt.BarCode))" />
+                                Convert.ToBase64String(Model.BarCode))" />
 
         }
         else
         {
-            <p> @Model.Receipt.SerialKey</p>
+            <p> @Model.SerialKey</p>
         }
         <div>
             <p>وقت البدء : @Model.StartReservationTme</p>
@@ -43,21 +43,5 @@
         </div>
 
     </div>
-
-    @*<button type="button" class="btnclick">Print</button>
-    <a class="printPage" href="#">Print Anchor</a>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript">
-        $('a.printPage').click(function () {
-            window.print();
-            return false;
-        });
-        $('.btnclick').on('click', function () {
-            window.print();
-            //$('#printd').print.print();
-            return false;
-        })
-    </script>*@
 </body>
 </html>

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,10 @@ namespace KidsAreaApp.Models
 {
     public class Reservation
     {
-        public Reservation()
-        {
-            Receipt = new Receipt();
-        }
-        public int ReservationId { get; set; }
-        public Receipt Receipt { get; set; }
+     
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int SerialKey { get; set; }
         [DisplayName("Start Time")]
         public DateTime StartReservationTme { get; set; } = DateTime.UtcNow;
         [DisplayName("End Time")]
@@ -24,6 +23,8 @@ namespace KidsAreaApp.Models
         public double TotatCost { get; set; }
         public double CostAfterDiscount { get; set; }
         public double Discount { get; set; } = 0;
+        [NotMapped]
+        public byte[] BarCode { get; set; }
         [NotMapped]
         public int Index{ get; set; }
 

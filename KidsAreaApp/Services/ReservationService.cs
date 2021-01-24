@@ -30,7 +30,7 @@ namespace KidsAreaApp.Services
 
         public async Task<Reservation> GetReservationAsync(int resservationId)
         {
-            var result = await _dbContex.Reservations.Include(r => r.Receipt).FirstOrDefaultAsync(Reservation => Reservation.ReservationId == resservationId);
+            var result = await _dbContex.Reservations.FirstOrDefaultAsync(Reservation => Reservation.SerialKey == resservationId);
             return result;
         }
         public async Task<PagingList<Reservation>> ReservationTransactions(DateTime startDate, DateTime endDate, int pageindex)
@@ -69,20 +69,20 @@ namespace KidsAreaApp.Services
             #region Qr Code writer to write it to Model
             QRCodeGenerator _qrCode = new QRCodeGenerator();
             QRCodeData _qrCodeData =
-                _qrCode.CreateQrCode(reservation.Receipt.SerialKey.ToString(), QRCodeGenerator.ECCLevel.Q);
+                _qrCode.CreateQrCode(reservation.SerialKey.ToString(), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(_qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
-            reservation.Receipt.BarCode = BitmapToBytesCode(qrCodeImage);
+            reservation.BarCode = BitmapToBytesCode(qrCodeImage);
             #endregion
 
             #region Qr Code writer to write it to wwwroot (Server) for testing
             // Qr Code writer to write it to wwwroot(Server) for testing
 
-            string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.Receipt.SerialKey}.bmp";
-            var qrcodeWritere = new BarcodeWriter();
-            qrcodeWritere.Format = BarcodeFormat.CODABAR;
-            qrcodeWritere.Write($"{reservation.Receipt.SerialKey}")
-                          .Save(qrcodePath);
+            //string qrcodePath = hostEnvironment.WebRootPath + $"/Images/QrCode/{reservation.SerialKey}.bmp";
+            //var qrcodeWritere = new BarcodeWriter();
+            //qrcodeWritere.Format = BarcodeFormat.CODABAR;
+            //qrcodeWritere.Write($"{reservation.SerialKey}")
+            //              .Save(qrcodePath);
             #endregion
 
             return reservation;
@@ -92,21 +92,35 @@ namespace KidsAreaApp.Services
         {
             await _dbContex.Reservations.AddAsync(reservation);
             await _dbContex.SaveChangesAsync();
+            //List<Reservation> ls=new List<Reservation>();
+            ////test 
+            //for (int i = 0; i < 200; i++)
+            //{
+            //    Reservation reservation1 = new Reservation
+            //    {
+            //        StartReservationTme = DateTime.Now,
+            //        EndReservationTme = DateTime.Now,
+            //    };
+            //    ls.Add(reservation1);
+            //}
+            //await _dbContex.Reservations.AddRangeAsync(ls);
+            //await _dbContex.SaveChangesAsync();
+
             #region bar code by zxing
             using (MemoryStream ms = new MemoryStream())
             {
                 var qrcodeWritere = new BarcodeWriter();
                 qrcodeWritere.Format = BarcodeFormat.CODE_128;
-                var res = qrcodeWritere.Write($"{reservation.Receipt.SerialKey}");
+                var res = qrcodeWritere.Write($"{reservation.SerialKey}");
                 res.Save(ms, ImageFormat.Png);
-                res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.Receipt.SerialKey + ".png", ImageFormat.Png);
+                //res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.SerialKey + ".png", ImageFormat.Png);
                 //The Image is finally converted to Base64 string.
-                reservation.Receipt.BarCode = ms.ToArray();
+                reservation.BarCode = ms.ToArray();
             }
             #endregion
-
             return reservation;
         }
+
         public async Task<Reservation> GeneratebarCode39(Reservation reservation)
         {
 
@@ -117,11 +131,11 @@ namespace KidsAreaApp.Services
             {
                 var qrcodeWritere = new BarcodeWriter();
                 qrcodeWritere.Format = BarcodeFormat.CODE_39;
-                var res = qrcodeWritere.Write($"{reservation.Receipt.SerialKey}");
+                var res = qrcodeWritere.Write($"{reservation.SerialKey}");
                 res.Save(ms, ImageFormat.Png);
-                res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.Receipt.SerialKey + ".png", ImageFormat.Png);
+                res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.SerialKey + ".png", ImageFormat.Png);
                 //The Image is finally converted to Base64 string.
-                reservation.Receipt.BarCode = ms.ToArray();
+                reservation.BarCode = ms.ToArray();
             }
             #endregion
 
@@ -136,12 +150,12 @@ namespace KidsAreaApp.Services
             using (MemoryStream ms = new MemoryStream())
             {
                 var qrcodeWritere = new BarcodeWriter();
-                qrcodeWritere.Format = BarcodeFormat.All_1D;
-                var res = qrcodeWritere.Write($"{reservation.Receipt.SerialKey}");
+                qrcodeWritere.Format = BarcodeFormat.QR_CODE;
+                var res = qrcodeWritere.Write($"{reservation.SerialKey.ToString()}");
                 res.Save(ms, ImageFormat.Png);
-                res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.Receipt.SerialKey + ".png", ImageFormat.Png);
+                res.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.SerialKey + ".png", ImageFormat.Png);
                 //The Image is finally converted to Base64 string.
-                reservation.Receipt.BarCode = ms.ToArray();
+                reservation.BarCode = ms.ToArray();
             }
             #endregion
 
@@ -157,7 +171,7 @@ namespace KidsAreaApp.Services
             #region bar code by Graphics
             using (MemoryStream ms = new MemoryStream())
             {
-                var key = reservation.Receipt.SerialKey.ToString();
+                var key = reservation.SerialKey.ToString();
                 //The Image is drawn based on length of Barcode text.
                 using (Bitmap bitMap = new Bitmap(key.Length * 40, 80))
                 {
@@ -179,10 +193,10 @@ namespace KidsAreaApp.Services
 
                     //The Bitmap is saved to Memory Stream.
                     bitMap.Save(ms, ImageFormat.Png);
-                    bitMap.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.Receipt.SerialKey + ".png", ImageFormat.Png);
+                    bitMap.Save(hostEnvironment.WebRootPath + "/Images/QrCode/" + reservation.SerialKey + ".png", ImageFormat.Png);
 
                     //The Image is finally converted to Base64 string.
-                    reservation.Receipt.BarCode = ms.ToArray();
+                    reservation.BarCode = ms.ToArray();
                 }
             }
             #endregion
@@ -195,11 +209,14 @@ namespace KidsAreaApp.Services
         public async Task<Reservation> ReadQRCode(string serialKey)
         {
             var reservation = await _dbContex.Reservations
-                            .Include(receipt => receipt.Receipt)
-                            .FirstOrDefaultAsync(r => r.Receipt.SerialKey.ToString() == serialKey);
+                            .FirstOrDefaultAsync(r => r.SerialKey.ToString() == serialKey);
+            if (reservation ==null)
+            {
+                return null;
+            }
             if (reservation.EndReservationTme == new DateTime(2021, 1, 1, 12, 0, 0))
             {
-                reservation.EndReservationTme = DateTime.UtcNow;
+                reservation.EndReservationTme = DateTime.UtcNow;//remove it
                 var restest = await _dbContex.SaveChangesAsync();
             }
             var timeInArea = reservation.EndReservationTme.Subtract(reservation.StartReservationTme);
@@ -211,15 +228,14 @@ namespace KidsAreaApp.Services
                 //var reservationUpdated = _dbContex.Reservations.Attach(reservation);
                 //reservationUpdated.State = EntityState.Modified;
             }
+            //reservation.SerialKey =Convert.ToInt32(serialKey);
             var res = await _dbContex.SaveChangesAsync();
 
             return reservation;
         }
         public async Task<Reservation> GetReservationForPrintFinalCost(Reservation reservation)
         {
-            var reservationd = await _dbContex.Reservations.FindAsync(reservation.ReservationId);
-            //var reservationFromDb = await _dbContex.Reservations.Include(r => r.Receipt).FirstOrDefaultAsync(reservation => reservation.Receipt.SerialKey == reservation.Receipt.SerialKey);
-
+            var reservationd = await _dbContex.Reservations.FindAsync(reservation.SerialKey);
             if (reservationd.TotatCost == 0)
             {
                 if (reservationd.EndReservationTme == new DateTime(2021, 1, 1, 12, 0, 0) || reservationd.EndReservationTme == new DateTime())
@@ -235,6 +251,7 @@ namespace KidsAreaApp.Services
 
             //var resupdated = _dbContex.Reservations.Attach(reservationFromDb);
             //resupdated.State = EntityState.Modified;
+            //reservationd.SerialKey = reservation.SerialKey;
             var result = await _dbContex.SaveChangesAsync();
             return reservationd;
 
@@ -243,7 +260,16 @@ namespace KidsAreaApp.Services
         #region helper methods
         private async Task<double> CalCost(TimeSpan time, double discount = 0)
         {
-            var hourCost = (await _dbContex.Hours.FirstOrDefaultAsync()).HourPrice;
+            var hour = await _dbContex.Hours.FirstOrDefaultAsync();
+            double hourCost;
+            if (hour==null)
+            {
+                hourCost = 0;
+            }
+            else
+            {
+                hourCost = hour.HourPrice;
+            }
             if (time.Hours < 1)
             {
                 return hourCost - discount;

@@ -7,11 +7,10 @@
     <div class="container row border ml-1 backgroundWhiteBorder10Padding" style="width:100%">
         <div class="col-md-8 offset-md-2 col-12" style="border-right:1px solid #bbb9b9">
             <br />
-            <input type="hidden" asp-for="@Model.ReservationId" />
-            <input type="hidden" asp-for="@Model.Receipt.SerialKey" />
-            <input type="hidden" asp-for="@Model.TotatCost" />
-            <input type="hidden" asp-for="@Model.StartReservationTme" />
-            <input type="hidden" asp-for="@Model.EndReservationTme" />
+            <input type="hidden" readonly asp-for="@Model.SerialKey" />
+            <input type="hidden" readonly asp-for="@Model.TotatCost" />
+            <input type="hidden" readonly asp-for="@Model.StartReservationTme" />
+            <input type="hidden" readonly asp-for="@Model.EndReservationTme" />
 
 
             <div class="form-group row">
@@ -19,7 +18,7 @@
                     <label asp-for="@Model.StartReservationTme"></label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="@Model.StartReservationTme" disabled class="form-control" />
+                    <input asp-for="@Model.StartReservationTme" readonly disabled class="form-control" />
                 </div>
             </div>
 
@@ -28,7 +27,7 @@
                     <label asp-for="@Model.EndReservationTme"></label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="@Model.EndReservationTme" disabled class="form-control" />
+                    <input asp-for="@Model.EndReservationTme" readonly disabled class="form-control" />
                 </div>
             </div>
 
@@ -37,7 +36,7 @@
                     <label>Cost</label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="@Model.TotatCost" disabled class="form-control" />
+                    <input asp-for="@Model.TotatCost" readonly disabled class="form-control" />
                 </div>
             </div>
 
@@ -52,10 +51,10 @@
 
             <div class="form-group row">
                 <div class="col-3">
-                    <label asp-for="@Model.Receipt.SerialKey"></label>
+                    <label asp-for="@Model.SerialKey"></label>
                 </div>
                 <div class="col-9">
-                    <input asp-for="@Model.Receipt.SerialKey" disabled class="form-control" />
+                    <input asp-for="@Model.SerialKey" readonly disabled class="form-control" />
                 </div>
             </div>
 
