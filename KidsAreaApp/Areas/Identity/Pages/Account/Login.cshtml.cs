@@ -72,7 +72,7 @@ namespace KidsAreaApp.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             return Page();
         }
-
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");

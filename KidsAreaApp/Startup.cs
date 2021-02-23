@@ -1,5 +1,6 @@
 using KidsAreaApp.Models;
 using KidsAreaApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,12 +48,19 @@ namespace KidsAreaApp
                     options.Conventions.AuthorizeAreaFolder("Identity", "/Account/Manage");
                     options.Conventions.AuthorizeAreaPage("Identity", "/Account/Logout");
                 }).AddRazorRuntimeCompilation();
-
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthorization();
+            services.AddSession();
             services.ConfigureApplicationCookie(options =>
             {
+                // Cookie settings
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
                 options.LoginPath = new PathString("/Identity/Account/Login");
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath= $"/Identity/Account/AccessDenied";
+                options.SlidingExpiration = true;
+                options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;
             });
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IDbInitializer, DbInitializer>();

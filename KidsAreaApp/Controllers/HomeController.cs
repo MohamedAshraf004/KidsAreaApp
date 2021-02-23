@@ -17,10 +17,12 @@ using KidsAreaApp.Services;
 using KidsAreaApp.Utility;
 using ReflectionIT.Mvc.Paging;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace KidsAreaApp.Controllers
 {
     [Authorize]
+    //[AllowAnonymous]
     public class HomeController : Controller
     {      
         private readonly ILogger<HomeController> _logger;
@@ -49,6 +51,7 @@ namespace KidsAreaApp.Controllers
             var re = new ViewAsPdf("PrintReservation")
             {
                 PageMargins= { Left = 3, Bottom = 3, Right = 3, Top = 3 },
+                PageSize = Rotativa.AspNetCore.Options.Size.A7,
                 PageWidth =55,
                 PageHeight=50,
                 Model=reservation
@@ -104,8 +107,9 @@ namespace KidsAreaApp.Controllers
             var ret= new ViewAsPdf("PrintReservation")
             {
                 PageMargins = { Left = 3, Bottom = 3, Right = 3, Top = 3 },
+                PageSize = Rotativa.AspNetCore.Options.Size.A7,
                 PageWidth = 55,
-                PageHeight = 62,
+                PageHeight = 68,
                 Model = result
             };
             return ret;
