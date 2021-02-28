@@ -3,6 +3,7 @@
 ###### App contains managing process of rervestion of tickets and manage hours prices and determine the time of staying in the area by writing and reading BarCode or QrCode on the printing receipt.
 Some technologices:
 * Asp.Net Core mvc
+* Repo pattern with DI
 * Bootstrap
 * Rotative 
 * Bitmap 
